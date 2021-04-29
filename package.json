@@ -1,0 +1,31 @@
+{
+  "name": "coup-de-etat",
+  "version": "1.0.0",
+  "description": "A game of influence.",
+  "main": "server.js",
+  "scripts": {
+    "build": "webpack -w --progress",
+    "start": "npm run build & npm run start:dev",
+    "start:dev": "nodemon server.js --ignore public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kirstie Rodriguez",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.16",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-stage-2": "^7.8.3",
+    "babel-loader": "^8.2.2",
+    "nodemon": "^2.0.7",
+    "webpack": "^5.36.1",
+    "webpack-cli": "^4.6.0"
+  }
+}
