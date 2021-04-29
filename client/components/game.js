@@ -1,41 +1,46 @@
 import React, { useState, useEffect } from 'react';
 
 export const Game = (props) => {
-    const [deck, setDeck] = useState([
-        'Duke',
-        'Duke',
-        'Duke',
-        'Assassin',
-        'Assassin',
-        'Assassin',
-        'Contessa',
-        'Contessa',
-        'Contessa',
-        'Captain',
-        'Captain',
-        'Captain',
-        'Ambassador',
-        'Ambassador',
-        'Ambassador'
-    ]);
+    const [deck, setDeck] = useState([]);
     const [hand, setHand] = useState([]);
 
     useEffect(() => {
-        setDeck(shuffle(deck));
+        const shuffledDeck = shuffle([
+            'Duke',
+            'Duke',
+            'Duke',
+            'Assassin',
+            'Assassin',
+            'Assassin',
+            'Contessa',
+            'Contessa',
+            'Contessa',
+            'Captain',
+            'Captain',
+            'Captain',
+            'Ambassador',
+            'Ambassador',
+            'Ambassador'])
+        setDeck(shuffledDeck);
     },[])
+
+    // useEffect(() => {
+    //     exchange();
+    // },[deck])
 
     function dealNewCard () {
         
     };
 
     function shuffle (deck) {
-        const length = deck.length;
-        for(let i = 0; i < length; i++){
-            let cardIdx = Math.random() * length + i;
-            deck.shift(deck[cardIdx]);
+        const shuffledDeck = [];
+        while(deck.length) {
+            let cardIdx = Math.floor(Math.random() * deck.length);
+            shuffledDeck.push(deck[cardIdx]);
             deck.splice(cardIdx, 1)
         }
-        return deck;
+        console.log('shuffled deck', shuffledDeck)
+        return shuffledDeck;
     }
 
     function startGame() {};
@@ -47,19 +52,23 @@ export const Game = (props) => {
         return {"picked": cards[0], "notPicked": cards[1]};
     };
 
-    function exchange() {
-        const tempDeck = new Array(deck);
-        const newCards = [tempDeck[0], tempDeck[1]];
-        let result;
-        const interval = setInterval(() => result = pickCard(newCards), 10000);
+    function exchange(cardInHand) {
+        const newCards = [deck[0], deck[1]];
+        let result = pickCard(newCards);
+        const interval = setInterval(() => {}, 10000);
         clearInterval(interval);
+        console.log('result in exchange', result)
+        returnCards([result.notPicked, cardInHand])
     }
-    
-    console.log('DECK:',deck)
+
+    function returnCards(cards){
+        setDeck(shuffle([...deck, ...cards]));
+    }
+
     return (
         <div>
-            Hi
-            {deck}
+            Hi {deck}
+            <button onClick={()=>exchange(deck[0])}>Exchange</button>
         </div>
     )
 }
