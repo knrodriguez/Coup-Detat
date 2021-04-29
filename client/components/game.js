@@ -49,7 +49,7 @@ export const Game = (props) => {
 
     function pickCard(cards) {
         console.log('Card #1:', cards[0], '\nCard #2:', cards[1]);
-        return {"picked": cards[0], "notPicked": cards[1]};
+        return {"picked": 0, "notPicked": 1};
     };
 
     function exchange(cardInHand) {
@@ -58,11 +58,13 @@ export const Game = (props) => {
         const interval = setInterval(() => {}, 10000);
         clearInterval(interval);
         console.log('result in exchange', result)
-        returnCards([result.notPicked, cardInHand])
+        returnCards(result.picked, cardInHand)
     }
 
-    function returnCards(cards){
-        setDeck(shuffle([...deck, ...cards]));
+    function returnCards(cardPicked, cardToReturn){
+        const editedDeck = deck.filter((card, i) => i !== cardPicked)
+        editedDeck.push(cardToReturn)
+        setDeck(shuffle(editedDeck));
     }
 
     return (
