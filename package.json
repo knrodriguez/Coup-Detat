@@ -4,9 +4,9 @@
   "description": "A game of influence.",
   "main": "server.js",
   "scripts": {
-    "build": "webpack -w --progress",
+    "build": "webpack -w",
     "start": "npm run build & npm run start:dev",
-    "start:dev": "nodemon server.js --ignore public",
+    "start:dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,7 +16,9 @@
     "express": "^4.17.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
