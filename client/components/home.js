@@ -1,15 +1,27 @@
-import React, { useContext } from 'react';
-import SocketContext from '../context/socket';
+import React, { useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 export const Home = (props) => {
-    console.log('in home component')
-    // const socket = io();
-    const socket = useContext(SocketContext);
-    socket.on('message', data => console.log('FUCKING HELP ME!'))
-    socket.emit('message', 'stuff')
+    const [name, setName] = useState('');
+    const history = useHistory();
+
+    function handleChange (evt) {
+        setName(evt.target.value);
+    }
+
+    function handleSubmit (evt){
+        evt.preventDefault();
+        localStorage.setItem('name', JSON.stringify(name));
+        history.push('/lobby')
+    }
     return (
         <div>
             HOMEPAGE
+            <form onSubmit={handleSubmit} onChange={handleChange}>
+                <label>Please enter your name:</label>
+                <input type='text' name='name' ></input>
+                <button type='submit'>Submit</button>
+            </form>
         </div>
     )
 }

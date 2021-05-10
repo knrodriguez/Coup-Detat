@@ -1,15 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from './components/home';
-import { Game } from './components/game';
-import { CreateGame } from './components/create-game';
+import Game from './components/game';
+import { Lobby } from './components/lobby'
+import { CreateRoom } from './components/create-room';
 
 export const Routes = (props) => {
     return (
 
             <Switch>
                 <Route exact path="/" component={Home} />
-                <Route exact path="/create-game" component={CreateGame} />
+                <Route exact path="/lobby" component={Lobby} />
+                <Route exact path="/create-room" component={CreateRoom} />
                 <Route exact path="/games/:gameId" component={Game} /> 
             </Switch>
     )

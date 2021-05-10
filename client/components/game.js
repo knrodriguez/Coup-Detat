@@ -1,49 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import SocketContext from '../context/socket'
+import { shuffle } from '../FUNCTIONS'
 
-export const Game = (props) => {
-    const [deck, setDeck] = useState([]);
+const Game = (props) => {
+    const [deck, setDeck] = useState([
+        'Duke',
+        'Duke',
+        'Duke',
+        'Assassin',
+        'Assassin',
+        'Assassin',
+        'Contessa',
+        'Contessa',
+        'Contessa',
+        'Captain',
+        'Captain',
+        'Captain',
+        'Ambassador',
+        'Ambassador',
+        'Ambassador']);
     const [hand, setHand] = useState([]);
 
-    useEffect(() => {
-        const shuffledDeck = shuffle([
-            'Duke',
-            'Duke',
-            'Duke',
-            'Assassin',
-            'Assassin',
-            'Assassin',
-            'Contessa',
-            'Contessa',
-            'Contessa',
-            'Captain',
-            'Captain',
-            'Captain',
-            'Ambassador',
-            'Ambassador',
-            'Ambassador'])
-        setDeck(shuffledDeck);
-    },[])
+    const socket = useContext(SocketContext)
+    socket.on('updateDeck', (deck) => {
+        setDeck(deck);
+    })
 
-    // useEffect(() => {
-    //     exchange();
-    // },[deck])
+    function dealNewCard () {};
 
-    function dealNewCard () {
-        
-    };
-
-    function shuffle (deck) {
-        const shuffledDeck = [];
-        while(deck.length) {
-            let cardIdx = Math.floor(Math.random() * deck.length);
-            shuffledDeck.push(deck[cardIdx]);
-            deck.splice(cardIdx, 1)
-        }
-        console.log('shuffled deck', shuffledDeck)
-        return shuffledDeck;
+    function updateDeck(shuffledDeck) {
+        setDeck(shuffledDeck)
     }
 
-    function startGame() {};
+    function startGame() {
+        socket.emit('startGame', shuffle(deck));
+    };
 
     function newGame() {};
 
@@ -71,6 +62,9 @@ export const Game = (props) => {
         <div>
             Hi {deck}
             <button onClick={()=>exchange(deck[0])}>Exchange</button>
+            <button onClick={()=>startGame()}>Start Game</button>
         </div>
     )
 }
+
+export default Game
