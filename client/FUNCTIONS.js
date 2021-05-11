@@ -7,3 +7,11 @@ export const shuffle = deck => {
     }
     return shuffledDeck;
 }
+
+export const getFromLocalStorage = item => {
+    return JSON.parse(localStorage.getItem(item));
+}
+
+export const addToLocalStorage = (name, data) => {
+    localStorage.setItem(name, JSON.stringify(data));
+}

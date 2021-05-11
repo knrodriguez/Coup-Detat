@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import SocketContext from '../context/socket'
 
 export const Home = (props) => {
     const [name, setName] = useState('');
     const history = useHistory();
+    const socket = useContext(SocketContext);
 
     function handleChange (evt) {
         setName(evt.target.value);
@@ -12,6 +14,7 @@ export const Home = (props) => {
     function handleSubmit (evt){
         evt.preventDefault();
         localStorage.setItem('name', JSON.stringify(name));
+        localStorage.setItem('socketId', JSON.stringify(socket.id));
         history.push('/lobby')
     }
     return (
@@ -20,7 +23,7 @@ export const Home = (props) => {
             <form onSubmit={handleSubmit} onChange={handleChange}>
                 <label>Please enter your name:</label>
                 <input type='text' name='name' ></input>
-                <button type='submit'>Submit</button>
+                <button type='submit'>Let's Play</button>
             </form>
         </div>
     )
