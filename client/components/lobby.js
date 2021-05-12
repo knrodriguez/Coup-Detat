@@ -1,64 +1,61 @@
-import React, {useState} from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { getFromLocalStorage, addToLocalStorage } from '../FUNCTIONS'
-const ALPHABET_START = 65;
-const ALPHABET_END = 122;
-const ALPHABET = ALPHABET_END - ALPHABET_START;
-const INVALID_CHARS_START = 91;
-const INVALID_CHARS_END = 96;
+import React, {useContext, useEffect, useState} from 'react';
+import { getFromLocalStorage } from '../FUNCTIONS'
+import { useHistory } from 'react-router-dom';
+import SocketContext from '../context/socket'
 
 export const Lobby = (props) => {
-    const user = localStorage.getItem('name');
-    const rooms = JSON.parse(localStorage.getItem('rooms'));
-    const history = useHistory();
+    const user = getFromLocalStorage('user');
+    const [room, setRoom] = useState({})
+    const [code, setCode] = useState('');
     const [showCreateGameModal, setShowCreateGameModal] = useState(false)
     const [showJoinGameModal, setShowJoinGameModal] = useState(false)
-    
+    const history = useHistory();
+
+    const socket = useContext(SocketContext)
+    socket.on('createdRoom', room => {
+        setRoom(room)
+        setShowCreateGameModal(true)
+    })
+    socket.on('joinedRoom', room => setRoom(room))
+    socket.on('startedGame', () => {
+        console.log('room in frontend', room)
+        history.push(`/games/${room.url}`)
+    })
+
     if(!user) history.push('/')
 
-    function handleSubmit(){
-
+    function handleChange (evt){
+        setCode(evt.target.value)
     }
 
-    function rng(start, end, invalidStart = null, invalidEnd = null){
-        let randomNum = Math.floor(Math.random() * (end - start) + start);
-        if(randomNum >= invalidStart && randomNum <= invalidEnd) 
-            return rng();
-        return randomNum;
+    function handleSubmit(evt){
+        evt.preventDefault();
+        socket.emit('joinRoom', code, user)
+        setShowJoinGameModal(true)
     }
 
-    function createUrl(){
-        let url = '';
-        for(let i = 0; i < 16; i++){
-            url += String.fromCharCode(rng(ALPHABET_START, ALPHABET_END, INVALID_CHARS_START, INVALID_CHARS_END))
-        }
-        return url;
+    function createGame() {
+        socket.emit('createRoom', user)
     }
 
-    function createGameCode(){
-        let code = ''; 
-        while(code.length < 4){
-            code += String.fromCharCode(rng(65, 90))
-        }
-        // const gameCodes = getFromLocalStorage('gameCodes');
-        // if(!gameCodes.includes(code)) addToLocalStorage('gameCodes', [...gameCodes, code]);
-        return code;
+    function startGame(){
+        socket.emit('startGame', room)
     }
 
     const createGameModal = (
         <div>
-            Here is your game code! Share with your friends to start a Coup!
-            {createGameCode()}
-
-            <Link to={`games/${createUrl()}`}>Start Game!</Link>
+            Here is your game code! Share with your friends to start a Coup!<br/>
+            {room.code}<br/>
+            {room.users && Object.keys(room.users).map(user => <>{user}<br/></>)}
+            <button type='button' onClick={startGame}>Start Game!</button>
             {/* onClick, make button -> emit url to other players, trigger start game sequence, destroy code*/}
         </div>
     )
 
     const joinGameModal = (
         <div>
-            Waiting for the host to start the game!
-            {/**/}
+            Waiting for the host to start the game!<br/>
+            {room.users && Object.keys(room.users).map(user => <>{user}<br/></>)}
         </div>
     )
 
@@ -68,11 +65,11 @@ export const Lobby = (props) => {
 
     return(
         <div>
-            <button type='button' onClick={()=>setShowCreateGameModal(true)}>Create A Game</button>
+            <button type='button' onClick={createGame}>Create A Game</button>
             <h2>or</h2>
             <form onSubmit={handleSubmit}>
                 <label>Enter A Game Code:</label>
-                <input type='text'></input>
+                <input type='text' onChange={handleChange}></input>
                 <button type='submit'>Join Game</button>
             </form>
         </div>

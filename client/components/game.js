@@ -33,7 +33,7 @@ const Game = (props) => {
     }
 
     function startGame() {
-        socket.emit('startGame', shuffle(deck));
+        socket.emit('shuffleDeck', shuffle(deck));
     };
 
     function newGame() {};

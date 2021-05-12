@@ -13,10 +13,10 @@ export const Home = (props) => {
 
     function handleSubmit (evt){
         evt.preventDefault();
-        localStorage.setItem('name', JSON.stringify(name));
-        localStorage.setItem('socketId', JSON.stringify(socket.id));
+        localStorage.setItem('user', JSON.stringify({name, socketId: socket.id}));
         history.push('/lobby')
     }
+    
     return (
         <div>
             HOMEPAGE
