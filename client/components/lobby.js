@@ -7,20 +7,14 @@ export const Lobby = (props) => {
     const user = getFromLocalStorage('user');
     const [room, setRoom] = useState({})
     const [code, setCode] = useState('');
-    const [showCreateGameModal, setShowCreateGameModal] = useState(false)
-    const [showJoinGameModal, setShowJoinGameModal] = useState(false)
+    const [showModal, setShowModal] = useState(false)
     const history = useHistory();
-
     const socket = useContext(SocketContext)
-    socket.on('createdRoom', room => {
+
+    socket.on('joinedRoom', room => {
         setRoom(room)
-        setShowCreateGameModal(true)
     })
-    socket.on('joinedRoom', room => setRoom(room))
-    socket.on('startedGame', () => {
-        console.log('room in frontend', room)
-        history.push(`/games/${room.url}`)
-    })
+    socket.on('startedGame', () => history.push(`/games/${room.url}`))
 
     if(!user) history.push('/')
 
@@ -30,39 +24,35 @@ export const Lobby = (props) => {
 
     function handleSubmit(evt){
         evt.preventDefault();
-        socket.emit('joinRoom', code, user)
-        setShowJoinGameModal(true)
+        socket.emit('joinRoom', code, user, setShowModal)
     }
 
     function createGame() {
-        socket.emit('createRoom', user)
+        socket.emit('createRoom', user, setShowModal)
     }
 
     function startGame(){
         socket.emit('startGame', room)
     }
 
-    const createGameModal = (
+    const modal = (
         <div>
-            Here is your game code! Share with your friends to start a Coup!<br/>
-            {room.code}<br/>
+            {
+                room.host === socket.id ? 
+                <>
+                    Here is your game code! Share with your friends to start a Coup!<br/>
+                    {room.code}<br/>
+                    <button type='button' onClick={startGame}>Start Game!</button><br/>
+                </> :
+                <>
+                    Waiting for the host to start the game!<br/>
+                </>
+            }
             {room.users && Object.keys(room.users).map(user => <>{user}<br/></>)}
-            <button type='button' onClick={startGame}>Start Game!</button>
-            {/* onClick, make button -> emit url to other players, trigger start game sequence, destroy code*/}
         </div>
     )
 
-    const joinGameModal = (
-        <div>
-            Waiting for the host to start the game!<br/>
-            {room.users && Object.keys(room.users).map(user => <>{user}<br/></>)}
-        </div>
-    )
-
-    //combine these to create reusable modal component
-    if(showCreateGameModal) return createGameModal;
-    if(showJoinGameModal) return joinGameModal;
-
+    if(showModal) return modal;
     return(
         <div>
             <button type='button' onClick={createGame}>Create A Game</button>

@@ -2,11 +2,11 @@
   "name": "coup-de-etat",
   "version": "1.0.0",
   "description": "A game of influence.",
-  "main": "server.js",
+  "main": "/server/index.js",
   "scripts": {
     "build": "webpack -w",
-    "start": "webpack -w & nodemon server.js",
-    "start:dev": "nodemon server.js",
+    "start": "webpack -w & nodemon server/index.js",
+    "start:dev": "nodemon server/index.js",
     "seed": "node ./client/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
