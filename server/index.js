@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 1337;
 const socketio = require('socket.io');
-const { createRoom, joinRoom, startGame } = require('./socket')
+const path = require('path')
+const { createRoom, joinRoom, startGame } = require('./socket');
 
 app.use(express.static(__dirname + '/../public'))
 
 app.get('*', (req, res, next) => {
   try {
-      res.sendFile(__dirname + '/../public/index.html')
+      res.sendFile(path.join(__dirname, '..', 'public/index.html'));
   } catch (error) {
       res.status(500).send(error)
   }

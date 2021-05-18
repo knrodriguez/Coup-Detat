@@ -2,14 +2,17 @@ import React, {useContext, useEffect, useState} from 'react';
 import { getFromLocalStorage } from '../FUNCTIONS'
 import { useHistory } from 'react-router-dom';
 import SocketContext from '../context/socket'
+import {RoomContext} from '../context/room'
 
 export const Lobby = (props) => {
     const user = getFromLocalStorage('user');
-    const [room, setRoom] = useState({})
+    // const [room, setRoom] = useState({})
     const [code, setCode] = useState('');
     const [showModal, setShowModal] = useState(false)
     const history = useHistory();
     const socket = useContext(SocketContext)
+    const {room, [room, setRoom]} = useContext(RoomContext);
+//need to figure out the destructuring of the room and setroom 
 
     socket.on('joinedRoom', room => {
         setRoom(room)
