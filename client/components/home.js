@@ -7,20 +7,19 @@ export const Home = (props) => {
     const history = useHistory();
     const socket = useContext(SocketContext);
 
-    function handleChange (evt) {
+    function changeName (evt) {
         setName(evt.target.value);
     }
 
-    function handleSubmit (evt){
+    function submitName (evt){
         evt.preventDefault();
         localStorage.setItem('user', JSON.stringify({name, socketId: socket.id}));
-        history.push('/lobby')
+        history.push('/rooms')
     }
     
     return (
         <div>
-            HOMEPAGE
-            <form onSubmit={handleSubmit} onChange={handleChange}>
+            <form onSubmit={submitName} onChange={changeName}>
                 <label>Please enter your name:</label>
                 <input type='text' name='name' ></input>
                 <button type='submit'>Let's Play</button>

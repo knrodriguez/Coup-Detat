@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Routes } from './routes';
 import { BrowserRouter as Router } from 'react-router-dom'
-import SocketContext, {socket} from './context/socket'
-import RoomProvider from './context/room';
+import { RoomProvider, SocketContext, socket } from './context'
  
 const App = (props) => {
     return (
