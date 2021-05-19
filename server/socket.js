@@ -30,8 +30,13 @@ const joinRoom = (socket, code, user) => {
 
 const startGame = room => rooms[room.code].gameStarted = true;
 
+const initializeGame = (socket, deck, room) => {
+
+}
+
 module.exports = {
     createRoom,
     joinRoom,
-    startGame
+    startGame,
+    initializeGame
 }

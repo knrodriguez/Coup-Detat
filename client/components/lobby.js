@@ -1,28 +1,26 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { getFromLocalStorage } from '../FUNCTIONS'
 import { useHistory } from 'react-router-dom';
-import SocketContext from '../context/socket'
+import { SocketContext, RoomContext } from '../context'
 
 export const Lobby = (props) => {
     const user = getFromLocalStorage('user');
-    const [room, setRoom] = useState({})
     const [code, setCode] = useState('');
     const [showModal, setShowModal] = useState(false)
     const history = useHistory();
     const socket = useContext(SocketContext)
+    const {room: [room, setRoom]} = useContext(RoomContext)
 
-    socket.on('joinedRoom', room => {
-        setRoom(room)
-    })
+    socket.on('joinedRoom', room => setRoom(room))
     socket.on('startedGame', () => history.push(`/games/${room.url}`))
 
     if(!user) history.push('/')
 
-    function handleChange (evt){
+    function changeRoomCode (evt){
         setCode(evt.target.value)
     }
 
-    function handleSubmit(evt){
+    function joinRoom(evt){
         evt.preventDefault();
         socket.emit('joinRoom', code, user, setShowModal)
     }
@@ -57,9 +55,9 @@ export const Lobby = (props) => {
         <div>
             <button type='button' onClick={createGame}>Create A Game</button>
             <h2>or</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={joinRoom}>
                 <label>Enter A Game Code:</label>
-                <input type='text' onChange={handleChange}></input>
+                <input type='text' onChange={changeRoomCode}></input>
                 <button type='submit'>Join Game</button>
             </form>
         </div>

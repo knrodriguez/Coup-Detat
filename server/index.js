@@ -2,13 +2,15 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 1337;
 const socketio = require('socket.io');
-const { createRoom, joinRoom, startGame } = require('./socket')
+const path = require('path')
+const { createRoom, joinRoom, startGame, initializeGame } = require('./socket')
 
 app.use(express.static(__dirname + '/../public'))
 
 app.get('*', (req, res, next) => {
   try {
-      res.sendFile(__dirname + '/../public/index.html')
+    console.log('DIRNMAMEEEE', path.join(__dirname, '..', 'public/index.html'))
+      res.sendFile(path.join(__dirname, '..', 'public/index.html'));
   } catch (error) {
       res.status(500).send(error)
   }
@@ -25,15 +27,15 @@ io.on("connection", socket => {
   console.log('a new user has joined in socket', socket.id)
   console.log('all rooms', rooms)
   socket.on('createRoom', (user, callback) => {
-    console.log('from create room',rooms)
     socket.emit('joinedRoom', createRoom(socket, user));
     callback(true)
+    console.log('from create room',rooms)
   })
 
   socket.on('joinRoom', (code, user, callback) => {
-    console.log('in join room', rooms, rooms[code])
     io.in(code).emit('joinedRoom', joinRoom(socket, code, user));
     callback(true)
+    console.log('in join room', rooms, rooms[code])
   })
 
   socket.on('startGame', (room) => {
@@ -43,6 +45,10 @@ io.on("connection", socket => {
 
   socket.on('shuffleDeck', deck => {
     io.sockets.emit('updateDeck', deck);
+  })
+
+  socket.on('initializeGame', (shuffledDeck, room) => {
+    initializeGame(socket, shuffledDeck, room)
   })
 
   socket.on('disconnect', () => {

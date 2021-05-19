@@ -26,6 +26,10 @@ const Game = (props) => {
         setDeck(deck);
     })
 
+    useEffect(() => {
+        socket.emit('initializeGame', shuffle(deck))
+    })
+
     function dealNewCard () {};
 
     function updateDeck(shuffledDeck) {
