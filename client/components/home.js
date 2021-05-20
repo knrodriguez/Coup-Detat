@@ -1,20 +1,32 @@
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import SocketContext from '../context/socket'
+import {SocketContext} from '../context'
+import {addToLocalStorage} from '../FUNCTIONS'
 
-export const Home = (props) => {
+export default function Home (props) {
     const [name, setName] = useState('');
     const history = useHistory();
-    const socket = useContext(SocketContext);
+    const { socket, error: [error, setError] } = useContext(SocketContext);
 
     function changeName (evt) {
         setName(evt.target.value);
     }
 
+    function validName () {
+        if(name === '') {
+            setError('Name cannot be empty')
+        }
+        return !!error
+    }
+
     function submitName (evt){
         evt.preventDefault();
-        localStorage.setItem('user', JSON.stringify({name, socketId: socket.id}));
-        history.push('/rooms')
+        setError('')
+        if(validName()){
+            addToLocalStorage('user', {name, socketId: socket.id});
+            if(error) setError('')
+            history.push('/rooms')
+        }
     }
     
     return (
@@ -22,7 +34,8 @@ export const Home = (props) => {
             <form onSubmit={submitName} onChange={changeName}>
                 <label>Please enter your name:</label>
                 <input type='text' name='name' ></input>
-                <button type='submit'>Let's Play</button>
+                <button type='submit'>Let's Play</button><br/>
+                {error}
             </form>
         </div>
     )

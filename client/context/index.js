@@ -1,9 +1,9 @@
 import RoomProvider, { RoomContext } from './room';
-import SocketContext, { socket } from './socket';
+import SocketProvider, { SocketContext } from './socket';
 
 export {
     RoomProvider,
     RoomContext,
-    SocketContext,
-    socket
+    SocketProvider,
+    SocketContext
 }

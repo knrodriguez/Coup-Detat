@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import SocketContext from '../context/socket'
+import {SocketContext} from '../context'
 import { shuffle } from '../FUNCTIONS'
 
-const Game = (props) => {
+export default function Game (props) {
     const [deck, setDeck] = useState([
         'Duke',
         'Duke',
@@ -70,5 +70,3 @@ const Game = (props) => {
         </div>
     )
 }
-
-export default Game

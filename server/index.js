@@ -23,8 +23,8 @@ const io = socketio(server);
 const rooms = io.sockets.adapter.rooms;
 
 io.on("connection", socket => {
-  console.log('a new user has joined in socket', socket.id)
-  console.log('all rooms', rooms)
+  console.log('new user joined in socket', socket.id)
+  // console.log('all rooms', rooms)
   
   socket.on('createRoom', (user, callback) => {
     try {

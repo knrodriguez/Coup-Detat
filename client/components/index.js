@@ -1,9 +1,11 @@
-import Game from './game';
-import Home from './home';
-import CreateGame from './create-game';
+import Game from './Game';
+import Home from './Home';
+import Rooms from './Rooms';
+import GameLobby from './GameLobby';
 
-export default {
+export {
     Game, 
     Home,
-    CreateGame
+    Rooms,
+    GameLobby
 }

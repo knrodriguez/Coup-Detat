@@ -2,22 +2,15 @@ import React, {useContext, useState} from 'react';
 import { getFromLocalStorage } from '../FUNCTIONS'
 import { useHistory } from 'react-router-dom';
 import { SocketContext, RoomContext } from '../context'
+import GameLobby from './GameLobby'
 
-export const Lobby = (props) => {
+export default function Lobby (props) {
     const user = getFromLocalStorage('user');
-    const [code, setCode] = useState(''),
-          [error, setError] = useState(''),
-          [showModal, setShowModal] = useState(false);
     const history = useHistory();
+    const [code, setCode] = useState(''),
+          [showModal, setShowModal] = useState(false);
     const {room: [room, setRoom]} = useContext(RoomContext)
-
-    const socket = useContext(SocketContext)
-    socket.on('joinedRoom', room => setRoom(room))
-    socket.on('startedGame', room => {
-        setRoom(room)
-        history.push(`/games/${room.url}`)
-    })
-    socket.on('error', error => setError(error))
+    const {socket, error: [error, setError]} = useContext(SocketContext)
 
     if(!user) history.push('/')
 
@@ -32,31 +25,17 @@ export const Lobby = (props) => {
 
     function createGame() {
         socket.emit('createRoom', user, setShowModal)
+        console.log('MODAL SHOW', showModal)
     }
 
     function startGame(){
         socket.emit('startGame', room)
     }
 
-    const modal = (
-        <div>
-            {
-                room.host === socket.id ? 
-                <>
-                    Here is your game code! Share with your friends to start a Coup!<br/>
-                    {room.code}<br/>
-                    <button type='button' onClick={startGame}>Start Game!</button> 
-                    {error}<br/>
-                </> :
-                <>
-                    Waiting for the host to start the game!<br/>
-                </>
-            }
-            {room.users && Object.values(room.users).map(user => <>{user}<br/></>)}
-        </div>
-    )
-
-    if(showModal) return modal;
+    console.log('SHOW MODAL', showModal)
+    if(showModal) {
+        return (<GameLobby startGame={startGame} error={error}/>)
+    }
     return(
         <div>
             <button type='button' onClick={createGame}>Create A Game</button>
@@ -69,3 +48,21 @@ export const Lobby = (props) => {
         </div>
     )
 }
+
+    // const modal = (
+    //     <div>
+    //         {
+    //             room.host === socket.id ? 
+    //             <>
+    //                 Here is your game code! Share with your friends to start a Coup!<br/>
+    //                 {room.code}<br/>
+    //                 <button type='button' onClick={startGame}>Start Game!</button> 
+    //                 {error}<br/>
+    //             </> :
+    //             <>
+    //                 Waiting for the host to start the game!<br/>
+    //             </>
+    //         }
+    //         {room.users && Object.values(room.users).map(user => <>{user}<br/></>)}
+    //     </div>
+    // )
