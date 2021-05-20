@@ -6,16 +6,15 @@ const ALPHANUMERAL_END = 122,
 function createString (len) {
     let string = '';
     for(let i = 0; i < len; i++){
-        string += String.fromCharCode(rng())
+        string += rng()
     }
     return string;
 }
 
 function rng(start = ALPHANUMERAL_START, end = ALPHANUMERAL_END){
-    let randomNum = Math.floor(Math.random() * (end - start) + start);
-    if(INVALID_CHARS.includes(String.fromCharCode(randomNum)))
-        return rng();
-    return randomNum;
+    const randomNum = Math.floor(Math.random() * (end - start) + start);
+    const randomChar = String.fromCharCode(randomNum)
+    return INVALID_CHARS.includes(randomChar) ? rng() : randomChar;
   }
   
 function createUrl(){
@@ -23,7 +22,7 @@ function createUrl(){
 }
   
 function createGameCode(){
-    const code = createString(4).toUpperCase();
+    const code = createString(6);
     return rooms[code] ? createGameCode() : code;
 }
 

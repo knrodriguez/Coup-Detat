@@ -1,6 +1,7 @@
-const rooms = require('./index');
-// const rooms = io.sockets.adapter.rooms;
+// const rooms = require('./index');
+const rooms = {};
 const { createUrl, createGameCode } = require('./helpers')
+const MIN_PLAYERS = 2, MAX_PLAYERS = 6;
 
 const createRoom = (socket, user) => {
     const code = createGameCode();
@@ -11,24 +12,32 @@ const createRoom = (socket, user) => {
       url: `${createUrl()}${code}`,
       users: {}
     }
-    rooms[code] = room;
-    return joinRoom(socket, code, user)
-}
 
-const validRoom = (code) => {
-    if (code in rooms) return rooms[code]
-    throw new Error('Invalid room')
+    rooms[code] = room;
+    joinRoom(socket, code, user)
+    return room;
 }
 
 const joinRoom = (socket, code, user) => {
-    if(validRoom(code)) {
-        rooms[code].users[user.name] = socket.id;
-        socket.join(code);
-        return rooms[code]
-    }
+    socket.join(code);
+    rooms[code].users[socket.id] = user.name;
+    return rooms[code];
 }
 
-const startGame = room => rooms[room.code].gameStarted = true;
+const startGame = code => {
+    const room = rooms[code];
+    try{
+        const numUsers = Object.keys(room.users).length;
+        if(numUsers >= MIN_PLAYERS && numUsers <= MAX_PLAYERS)
+            room.gameStarted = true;
+        else 
+            throw new Error('Not Enough Players')
+    } catch(error) {
+        room.error = error.message
+    } finally {
+        return room;
+    }
+}
 
 const initializeGame = (socket, deck, room) => {
 

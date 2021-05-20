@@ -1,18 +1,23 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { getFromLocalStorage } from '../FUNCTIONS'
 import { useHistory } from 'react-router-dom';
 import { SocketContext, RoomContext } from '../context'
 
 export const Lobby = (props) => {
     const user = getFromLocalStorage('user');
-    const [code, setCode] = useState('');
-    const [showModal, setShowModal] = useState(false)
+    const [code, setCode] = useState(''),
+          [error, setError] = useState(''),
+          [showModal, setShowModal] = useState(false);
     const history = useHistory();
-    const socket = useContext(SocketContext)
     const {room: [room, setRoom]} = useContext(RoomContext)
 
+    const socket = useContext(SocketContext)
     socket.on('joinedRoom', room => setRoom(room))
-    socket.on('startedGame', () => history.push(`/games/${room.url}`))
+    socket.on('startedGame', room => {
+        setRoom(room)
+        history.push(`/games/${room.url}`)
+    })
+    socket.on('error', error => setError(error))
 
     if(!user) history.push('/')
 
@@ -40,13 +45,14 @@ export const Lobby = (props) => {
                 <>
                     Here is your game code! Share with your friends to start a Coup!<br/>
                     {room.code}<br/>
-                    <button type='button' onClick={startGame}>Start Game!</button><br/>
+                    <button type='button' onClick={startGame}>Start Game!</button> 
+                    {error}<br/>
                 </> :
                 <>
                     Waiting for the host to start the game!<br/>
                 </>
             }
-            {room.users && Object.keys(room.users).map(user => <>{user}<br/></>)}
+            {room.users && Object.values(room.users).map(user => <>{user}<br/></>)}
         </div>
     )
 

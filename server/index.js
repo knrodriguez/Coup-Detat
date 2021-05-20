@@ -9,7 +9,6 @@ app.use(express.static(__dirname + '/../public'))
 
 app.get('*', (req, res, next) => {
   try {
-    console.log('DIRNMAMEEEE', path.join(__dirname, '..', 'public/index.html'))
       res.sendFile(path.join(__dirname, '..', 'public/index.html'));
   } catch (error) {
       res.status(500).send(error)
@@ -26,21 +25,44 @@ const rooms = io.sockets.adapter.rooms;
 io.on("connection", socket => {
   console.log('a new user has joined in socket', socket.id)
   console.log('all rooms', rooms)
+  
   socket.on('createRoom', (user, callback) => {
-    socket.emit('joinedRoom', createRoom(socket, user));
-    callback(true)
-    console.log('from create room',rooms)
+    try {
+      const room = createRoom(socket, user);
+      
+      if(rooms.get(room.code).has(socket.id)){
+        socket.emit('joinedRoom', room);
+        callback(true);
+      }
+    } catch(error){
+      callback(false)
+    }
   })
 
   socket.on('joinRoom', (code, user, callback) => {
-    io.in(code).emit('joinedRoom', joinRoom(socket, code, user));
-    callback(true)
-    console.log('in join room', rooms, rooms[code])
+    try{
+      const room = joinRoom(socket, code, user);
+
+      if(rooms.get(code).has(socket.id)){
+        io.in(code).emit('joinedRoom', room);
+        callback(true)
+      } 
+    } catch(error){
+      callback(false)
+    }
   })
 
-  socket.on('startGame', (room) => {
-    io.in(room.code).emit('startedGame', startGame(room));
-    console.log(rooms[room.code])
+  socket.on('startGame', room => {
+      const code = room.code;
+      room = startGame(code);
+
+      if(room.error){
+        socket.emit('error', room.error)
+        delete room.error;
+      }
+      if(room.gameStarted){
+        io.in(room.code).emit('startedGame', room);
+      }
   })
 
   socket.on('shuffleDeck', deck => {
