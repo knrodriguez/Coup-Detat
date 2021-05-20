@@ -25,14 +25,12 @@ export default function Lobby (props) {
 
     function createGame() {
         socket.emit('createRoom', user, setShowModal)
-        console.log('MODAL SHOW', showModal)
     }
 
     function startGame(){
         socket.emit('startGame', room)
     }
 
-    console.log('SHOW MODAL', showModal)
     if(showModal) {
         return (<GameLobby startGame={startGame} error={error}/>)
     }
@@ -48,21 +46,3 @@ export default function Lobby (props) {
         </div>
     )
 }
-
-    // const modal = (
-    //     <div>
-    //         {
-    //             room.host === socket.id ? 
-    //             <>
-    //                 Here is your game code! Share with your friends to start a Coup!<br/>
-    //                 {room.code}<br/>
-    //                 <button type='button' onClick={startGame}>Start Game!</button> 
-    //                 {error}<br/>
-    //             </> :
-    //             <>
-    //                 Waiting for the host to start the game!<br/>
-    //             </>
-    //         }
-    //         {room.users && Object.values(room.users).map(user => <>{user}<br/></>)}
-    //     </div>
-    // )
