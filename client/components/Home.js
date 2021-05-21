@@ -9,31 +9,26 @@ export default function Home (props) {
     const { socket, error: [error, setError] } = useContext(SocketContext);
 
     function changeName (evt) {
-        setName(evt.target.value);
+        setName(evt.target.value.trim());
     }
 
-    function validName () {
-        if(name === '') {
-            setError('Name cannot be empty')
-        }
-        return !!error
-    }
-
-    function submitName (evt){
+    function validName (evt) {
         evt.preventDefault();
-        setError('')
-        if(validName()){
-            addToLocalStorage('user', {name, socketId: socket.id});
-            if(error) setError('')
-            history.push('/rooms')
-        }
+        if(!name) setError('Name cannot be empty')
+        else submitName();
+    }
+
+    function submitName (){
+        addToLocalStorage('user', {name, socketId: socket.id});
+        if(error) setError('')
+        history.push('/rooms')
     }
     
     return (
         <div>
-            <form onSubmit={submitName} onChange={changeName}>
+            <form onSubmit={validName} onChange={changeName}>
                 <label>Please enter your name:</label>
-                <input type='text' name='name' ></input>
+                <input type='text' name='name' required></input>
                 <button type='submit'>Let's Play</button><br/>
                 {error}
             </form>

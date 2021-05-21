@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { SocketContext, RoomContext } from '../context'
 import GameLobby from './GameLobby'
 
-export default function Lobby (props) {
+export default function (props) {
     const user = getFromLocalStorage('user');
     const history = useHistory();
     const [code, setCode] = useState(''),
